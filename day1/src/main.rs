@@ -38,7 +38,7 @@ fn part2() {
 
     let mut total = 0;
 
-    const SPELLED_NUMBERS: [&'static str; 9] = [
+    const SPELLED_NUMBERS: [&str; 9] = [
         "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
     ];
 
@@ -48,7 +48,7 @@ fn part2() {
                 numbers.push_back(number as usize);
             } else {
                 buffer.push(c);
-                let maybe_number = SPELLED_NUMBERS.iter().position(|sp| *sp == &buffer);
+                let maybe_number = SPELLED_NUMBERS.iter().position(|sp| *sp == buffer);
                 if let Some(number) = maybe_number {
                     numbers.push_back(number + 1);
                 } else {
