@@ -1,42 +1,33 @@
+const MAX_RED_CUBE: u32 = 12;
+const MAX_GREEN_CUBE: u32 = 13;
+const MAX_BLUE_CUBE: u32 = 14;
+
 fn main() -> Result<(), &'static str> {
     run().ok_or("error")
 }
 
-fn position_digit(s: &str) -> Option<usize> {
-    s.chars()
-        .enumerate()
-        .take_while(|(_, c)| c.is_ascii_digit())
-        .map(|(idx, _)| idx)
-        .last()
-}
-
 fn run() -> Option<()> {
     let input = include_str!("input.txt");
-    let max_red_cube = 12;
-    let max_green_cube = 13;
-    let max_blue_cube = 14;
+
     let mut total_part1 = 0;
     let mut total_part2 = 0;
 
     for line in input.lines() {
         let line = &line[5..];
-        let pos_id = position_digit(line)?;
-        let id = line[0..=pos_id].to_string().parse::<u32>().ok()?;
-        let line = &line[pos_id + 2..];
+        let (id, line) = line.split_once(':')?;
+
         let bags = line.split(';');
         let mut min_blue_cube = 1;
         let mut min_red_cube = 1;
         let mut min_green_cube = 1;
         let mut valid = true;
         for bag in bags {
-            let cubes = bag.split(',');
-            for cube in cubes.map(|c| c.trim()) {
-                let pos_amount = position_digit(cube)?;
-                let amount = cube[0..=pos_amount].to_string().parse::<u32>().ok()?;
-                let color = &cube[pos_amount + 1..];
+            for cube in bag.split(',').map(|c| c.trim()) {
+                let (amount, color) = cube.split_once(' ')?;
+                let amount = amount.parse::<u32>().ok()?;
                 match color.trim() {
                     "blue" => {
-                        if amount > max_blue_cube {
+                        if amount > MAX_BLUE_CUBE {
                             valid = false;
                         }
                         if amount > min_blue_cube {
@@ -44,7 +35,7 @@ fn run() -> Option<()> {
                         }
                     }
                     "red" => {
-                        if amount > max_red_cube {
+                        if amount > MAX_RED_CUBE {
                             valid = false;
                         }
                         if amount > min_red_cube {
@@ -52,7 +43,7 @@ fn run() -> Option<()> {
                         }
                     }
                     "green" => {
-                        if amount > max_green_cube {
+                        if amount > MAX_GREEN_CUBE {
                             valid = false;
                         }
                         if amount > min_green_cube {
@@ -65,9 +56,11 @@ fn run() -> Option<()> {
                 }
             }
         }
+
         if valid {
-            total_part1 += id;
+            total_part1 += id.parse::<u32>().ok()?;
         }
+
         total_part2 += min_blue_cube * min_red_cube * min_green_cube;
     }
 
