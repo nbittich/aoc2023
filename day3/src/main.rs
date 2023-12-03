@@ -92,7 +92,7 @@ fn run() {
             })
             .collect::<Vec<_>>();
         if numbers_adj.len() == 2 {
-            total_part_2 += numbers_adj.into_iter().cloned().product::<u64>();
+            total_part_2 += numbers_adj.into_iter().product::<u64>();
         }
     }
     println!("part 2: {total_part_2}");
