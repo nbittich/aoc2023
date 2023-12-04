@@ -7,22 +7,19 @@ fn main() {
 fn run() {
     let input = include_str!("input.txt").trim();
 
-    let mut cards = vec![];
-
-    for line in input.lines() {
-        let (_, line) = line.split_once(':').unwrap();
-        let (winning_numbers, numbers) = line
-            .split_once('|')
-            .map(|(l, r)| {
+    let cards = input
+        .lines()
+        .filter_map(|line| line.split_once(':'))
+        .filter_map(|(_, line)| {
+            line.split_once('|').map(|(l, r)| {
                 (
                     l.split_whitespace().collect::<Vec<_>>(),
                     r.split_whitespace().collect::<Vec<_>>(),
                 )
             })
-            .unwrap();
+        })
+        .collect::<Vec<_>>();
 
-        cards.push((winning_numbers, numbers));
-    }
     let winning_cards = cards
         .iter()
         .enumerate()
