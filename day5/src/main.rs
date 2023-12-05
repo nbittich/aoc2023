@@ -29,21 +29,21 @@ fn run() {
         })
         .collect::<Vec<_>>();
 
-    fn process(out: &mut [u32], maps: &[(&str, Vec<Vec<u32>>)]) {
+    fn process(value: &u32, maps: &[(&str, Vec<Vec<u32>>)]) -> u32 {
+        let mut new_value = *value;
         for (_, mapper) in maps {
-            out.par_iter_mut().for_each(|value| {
-                for map in mapper {
-                    let dest = map[0];
-                    let src = map[1];
-                    let len = map[2];
-                    let delta = dest - src;
-                    if *value >= src && *value < src + len {
-                        *value += delta;
-                        break;
-                    }
+            for map in mapper {
+                let dest = map[0];
+                let src = map[1];
+                let len = map[2];
+                let delta = dest - src;
+                if new_value >= src && new_value < src + len {
+                    new_value += delta;
+                    break;
                 }
-            });
+            }
         }
+        new_value
     }
     let seeds = maps
         .iter()
@@ -54,23 +54,29 @@ fn run() {
         .collect::<Vec<_>>();
 
     // part 1
-    let mut out_part_1 = seeds.clone();
-    process(&mut out_part_1, &maps[1..]);
-
-    println!("part 1: {}", out_part_1.iter().min().unwrap());
+    let out_part_1 = seeds
+        .par_iter()
+        .map(|v| process(v, &maps[1..]))
+        .min()
+        .unwrap();
+    println!("part 1: {}", out_part_1);
 
     // part 2
-    let mut out_part_2 = seeds
+
+    let out_part_2 = seeds
         .par_chunks(2)
-        .flat_map(|chunk| {
+        .filter_map(|chunk| {
             let start = chunk[0];
             let len = chunk[1];
-            start..start + len
+            (start..start + len)
+                .into_par_iter()
+                .map(|v| process(&v, &maps[1..]))
+                .min()
         })
-        .collect::<Vec<_>>();
-    process(&mut out_part_2, &maps[1..]);
+        .min()
+        .unwrap();
 
-    println!("part 2: {}", out_part_2.iter().min().unwrap());
+    println!("part 2: {}", out_part_2);
     let end_t = SystemTime::now();
 
     println!(
