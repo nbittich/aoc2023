@@ -49,15 +49,14 @@ fn part2(input: &str) {
         .trim()
         .lines()
         .filter_map(|line| {
-            line.split_once(':')
-                .and_then(|(_, s)| {
-                    s.trim()
-                        .chars()
-                        .filter(|c| !c.is_whitespace())
-                        .collect::<String>()
-                        .parse::<u128>()
-                        .ok()
-                })
+            line.split_once(':').and_then(|(_, s)| {
+                s.trim()
+                    .chars()
+                    .filter(|c| !c.is_whitespace())
+                    .collect::<String>()
+                    .parse::<u128>()
+                    .ok()
+            })
         })
         .collect::<Vec<_>>();
     let time = input[0];
